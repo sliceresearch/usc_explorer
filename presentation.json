@@ -1,0 +1,22 @@
+{ 	"name": "Test", 
+	"author": "SM", 
+	"copyright": "SM", 
+	"scenes":[
+	{
+	        "scene": "main_scene",
+        	"frames":[
+			{
+			"image": "Image.jpg", 
+			"video": "Test", 
+			"width": 1, 	
+			"hight": 1.0 },
+        		{
+			"image": "Test1", 
+			"video": "Test", 
+			"width": 2, 	
+			"hight": 1.0 }],
+        	"north": 500,
+        	"east": 500,
+        	"south": 500,
+        	"west": 500 }] 
+}

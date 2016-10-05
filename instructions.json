@@ -1,11 +1,12 @@
 {
 	"main_script": "usc_explorer.js",
-	"icon": "photos.png",
+	"icon": "usc.png",
 	"width": 800,
 	"height": 600,
 	"animation": true,
 	"dependencies": [
 		"photo_scrapbooks.js"
+
 	],
 	"load": {
 		"imageSet": 0,

@@ -23,23 +23,21 @@
 // the images can be stored in the same location as the text file with the list of images
 // or they can be stored in different URLs
 
-
-    SAGE2_photoAlbums = [];
+    presentationScene = [];
     
-    
-    SAGE2_photoAlbums[0] = {list:"https://lyra.evl.uic.edu:9000/sagewalls/photos.txt",
+    presentationScene[0] = {list:"https://lyra.evl.uic.edu:9000/sagewalls/photos.txt",
             location:"https://lyra.evl.uic.edu:9000/sagewalls/",
             name:"sage"};
-    SAGE2_photoAlbums[1] = {list:"https://lyra.evl.uic.edu:9000/webcam2.txt",
+    presentationScene[1] = {list:"https://lyra.evl.uic.edu:9000/webcam2.txt",
             location:"ftp://ftp.evl.uic.edu/pub/INcoming/spiff/",
         	name:"pond"};
-    SAGE2_photoAlbums[2] = {list:"https://lyra.evl.uic.edu:9000/webcam3.txt",
+    presentationScene[2] = {list:"https://lyra.evl.uic.edu:9000/webcam3.txt",
             location:"http://cdn.abclocal.go.com/three/wls/webcam/",
         	name:"chi"};
-    SAGE2_photoAlbums[3] = {list:"https://lyra.evl.uic.edu:9000/posters/photos.txt",
+    presentationScene[3] = {list:"https://lyra.evl.uic.edu:9000/posters/photos.txt",
             location:"https://lyra.evl.uic.edu:9000/posters/",
         	name:"movie"};
-    SAGE2_photoAlbums[4] = {list:"https://sage.evl.uic.edu/evl_Pictures/photos.txt",
+    presentationScene[4] = {list:"https://sage.evl.uic.edu/evl_Pictures/photos.txt",
             location:"https://sage.evl.uic.edu/evl_Pictures/",
             name:"evl"};
 
@@ -53,3 +51,6 @@
 
 // canvas background gives the color of the background of the window
     SAGE2_photoAlbumCanvasBackground = "black";
+
+//    var lImage = require('/loadImage.js');
+ //   loadImage(presentationScene);

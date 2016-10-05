@@ -14,17 +14,17 @@
 ////////////////////////////////////////
 
 /*
-    SAGE2_photoAlbums = [];
-    SAGE2_photoAlbums[0] = {list:"https://lyra.evl.uic.edu:9000/evl_Pictures/photos.txt",
+    presentationScene = [];
+    presentationScene[0] = {list:"https://lyra.evl.uic.edu:9000/evl_Pictures/photos.txt",
             location:"https://lyra.evl.uic.edu:9000/evl_Pictures/"};
-    SAGE2_photoAlbums[1] = {list:"https://lyra.evl.uic.edu:9000/webcam2.txt",
+    presentationScene[1] = {list:"https://lyra.evl.uic.edu:9000/webcam2.txt",
             location:"ftp://ftp.evl.uic.edu/pub/INcoming/spiff/"};
-    SAGE2_photoAlbums[2] = {list:"https://lyra.evl.uic.edu:9000/webcam3.txt",
+    presentationScene[2] = {list:"https://lyra.evl.uic.edu:9000/webcam3.txt",
             location:"http://cdn.abclocal.go.com/three/wls/webcam/"};
-    SAGE2_photoAlbums[3] = {list:"https://lyra.evl.uic.edu:9000/posters/photos.txt",
+    presentationScene[3] = {list:"https://lyra.evl.uic.edu:9000/posters/photos.txt",
             location:"https://lyra.evl.uic.edu:9000/posters/"};
 
-    SAGE2_photoAlbums[4] = {list:"https://sage.evl.uic.edu/evl_Pictures/photos.txt",
+    presentationScene[4] = {list:"https://sage.evl.uic.edu/evl_Pictures/photos.txt",
             location:"https://sage.evl.uic.edu/evl_Pictures/"};
 */
 
@@ -33,7 +33,7 @@
 	SAGE2_photoAlbumLoadTimer,
 	SAGE2_photoAlbumFadeCount,
 	SAGE2_photoAlbumCanvasBackground,
-	SAGE2_photoAlbums
+	presentationScene
 */
 
 var usc_explorer = SAGE2_App.extend({
@@ -85,7 +85,7 @@ var usc_explorer = SAGE2_App.extend({
 		this.fileName = "";
 		this.listFileName = "";
 
-		this.appName = "evl_photos:";
+		this.appName = "usc_explorer:";
 
 		this.image1 = new Image();
 		this.image2 = new Image();
@@ -106,8 +106,8 @@ var usc_explorer = SAGE2_App.extend({
 	// choose a specific image library from those loaded to cycle through
 
 	chooseImagery: function(selection) {
-		this.listFileNamePhotos = SAGE2_photoAlbums[selection].list;
-		this.listFileNameLibrary = SAGE2_photoAlbums[selection].location;
+		this.listFileNamePhotos = presentationScene[selection].list;
+		this.listFileNameLibrary = presentationScene[selection].location;
 	},
 
 	////////////////////////////////////////
@@ -296,7 +296,7 @@ var usc_explorer = SAGE2_App.extend({
 	nextAlbum: function() {
 		this.bigList = null;
 		this.state.imageSet += 1;
-		if (this.state.imageSet >= SAGE2_photoAlbums.length) {
+		if (this.state.imageSet >= presentationScene.length) {
 			this.state.imageSet = 0;
 		}
 		this.chooseImagery(this.state.imageSet);
@@ -447,7 +447,7 @@ var usc_explorer = SAGE2_App.extend({
 		this.fileName = "";
 		this.listFileName = "";
 
-		this.appName = "evl_photos:";
+		this.appName = "usc_explorer:";
 
 		this.image1 = new Image();
 		this.image2 = new Image();
@@ -515,12 +515,12 @@ var usc_explorer = SAGE2_App.extend({
 
 		var _this = this;
 
-		for (var loopIdx = 0; loopIdx < SAGE2_photoAlbums.length; loopIdx++) {
+		for (var loopIdx = 0; loopIdx < presentationScene.length; loopIdx++) {
 			var loopIdxWithPrefix = "0" + loopIdx;
 			(function(loopIdxWithPrefix) {
 				var albumButton = {
 					textual: true,
-					label: SAGE2_photoAlbums[loopIdx].name,
+					label: presentationScene[loopIdx].name,
 					fill: "rgba(250,250,250,1.0)",
 					animation: false
 				};
