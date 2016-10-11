@@ -5,7 +5,8 @@
 	"height": 600,
 	"animation": true,
 	"dependencies": [
-		"photo_scrapbooks.js"
+
+		"presentationControl.js"
 
 	],
 	"load": {

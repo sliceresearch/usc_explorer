@@ -29,14 +29,14 @@
 */
 
 
-/* global d3,
+/* global d3, PresentationControl
 	SAGE2_photoAlbumLoadTimer,
 	SAGE2_photoAlbumFadeCount,
 	SAGE2_photoAlbumCanvasBackground,
 	presentationScene
 */
 
-var usc_explorer = SAGE2_App.extend({
+var usc_explorer = SAGE2_WebGLApp.extend({
 	construct: function() {
 		arguments.callee.superClass.construct.call(this);
 
@@ -54,6 +54,19 @@ var usc_explorer = SAGE2_App.extend({
 		this.loadTimer = 15; // default value to be replaced from photo_scrapbooks.js
 		this.fadeCount = 10.0; // default value to be replaced from photo_scrapbooks.js
 
+		var presentationScene = [];
+	    
+		// load timer is how long to show a single image in seconds before loading 
+		// the next one or refreshing the current one
+	    SAGE2_photoAlbumLoadTimer = 20;
+
+		// fade count is how many frames it takes to fade between the old and new image
+	    SAGE2_photoAlbumFadeCount = 20;
+
+		// canvas background gives the color of the background of the window
+	    SAGE2_photoAlbumCanvasBackground = "black";
+	    
+	    
 		if (SAGE2_photoAlbumLoadTimer !== null) {
 			this.loadTimer = SAGE2_photoAlbumLoadTimer;
 		}
@@ -113,6 +126,7 @@ var usc_explorer = SAGE2_App.extend({
 	////////////////////////////////////////
 
 	initApp: function() {
+
 		this.listFileCallbackFunc        = this.listFileCallback.bind(this);
 		this.imageLoadCallbackFunc       = this.imageLoadCallback.bind(this);
 		this.imageLoadFailedCallbackFunc = this.imageLoadFailedCallback.bind(this);
@@ -125,8 +139,9 @@ var usc_explorer = SAGE2_App.extend({
 		this.image3.onerror = this.imageLoadFailedCallbackFunc;
 
 		this.chooseImagery(this.state.imageSet);
-
 		this.loadInList();
+		
+		
 	},
 
 	////////////////////////////////////////
@@ -415,7 +430,8 @@ var usc_explorer = SAGE2_App.extend({
 
 		this.loadTimer = 15; // default value to be replaced from photo_scrapbooks.js
 		this.fadeCount = 10.0; // default value to be replaced from photo_scrapbooks.js
-
+		var path = this.resrcPath + 'presentation.json';
+		
 		if (SAGE2_photoAlbumLoadTimer !== null) {
 			this.loadTimer = SAGE2_photoAlbumLoadTimer;
 		}
@@ -514,7 +530,9 @@ var usc_explorer = SAGE2_App.extend({
 		// }.bind(this)});
 
 		var _this = this;
-
+	    var path = this.resrcPath + 'presentation.json';
+	    presentationScene = PresentationControl.loadImage(path);
+	    
 		for (var loopIdx = 0; loopIdx < presentationScene.length; loopIdx++) {
 			var loopIdxWithPrefix = "0" + loopIdx;
 			(function(loopIdxWithPrefix) {
