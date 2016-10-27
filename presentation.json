@@ -25,7 +25,7 @@
 			"hight": 1.0 },
 			{
 			"source": 1, 
-			"image": "image.jpg", 
+			"image": "radar.png", 
 			"width": 4, 	
 			"hight": 1.0 }
 			],
@@ -54,13 +54,7 @@
 			"video": "", 
 			"width": 4, 	
 			"hight": 1.0 },
-        		{
-			"source": 1, 
-			"image": "image.jpg", 
-			"video": "", 
-			"width": 4, 	
-			"hight": 1.0 },
-			{
+ 			{
 			"source": 1, 
 			"image": "image1.jpg",
 			"video": "", 
@@ -68,7 +62,7 @@
 			"hight": 1.0 },
         		{
 			"source": 1, 
-			"image": "image.jpg", 
+			"image": "radar.png", 
 			"video": "", 
 			"width": 4, 	
 			"hight": 1.0 }

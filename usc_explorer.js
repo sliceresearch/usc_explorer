@@ -13,22 +13,6 @@
 // Written by Andy Johnson - 2014
 ////////////////////////////////////////
 
-/*
-    presentationScene = [];
-    presentationScene[0] = {list:"https://lyra.evl.uic.edu:9000/evl_Pictures/photos.txt",
-            location:"https://lyra.evl.uic.edu:9000/evl_Pictures/"};
-    presentationScene[1] = {list:"https://lyra.evl.uic.edu:9000/webcam2.txt",
-            location:"ftp://ftp.evl.uic.edu/pub/INcoming/spiff/"};
-    presentationScene[2] = {list:"https://lyra.evl.uic.edu:9000/webcam3.txt",
-            location:"http://cdn.abclocal.go.com/three/wls/webcam/"};
-    presentationScene[3] = {list:"https://lyra.evl.uic.edu:9000/posters/photos.txt",
-            location:"https://lyra.evl.uic.edu:9000/posters/"};
-
-    presentationScene[4] = {list:"https://sage.evl.uic.edu/evl_Pictures/photos.txt",
-            location:"https://sage.evl.uic.edu/evl_Pictures/"};
-*/
-
-
 /* global d3, PresentationControl
 	SAGE2_photoAlbumLoadTimer,
 	SAGE2_photoAlbumFadeCount,
@@ -48,13 +32,12 @@ var usc_explorer = SAGE2_App.extend({
 
 		this.canvasBackground = "green";
 
-		this.canvasWidth  = 2800;
-		this.canvasHeight = 600;
-
 		this.loadTimer = 15; // default value to be replaced from photo_scrapbooks.js
 		this.fadeCount = 10.0; // default value to be replaced from photo_scrapbooks.js
 
-		var presentationScene = [];
+		this.presentationScene = [];
+		this.imageSet = [];
+		this.images = [];
 	    
 		// load timer is how long to show a single image in seconds before loading 
 		// the next one or refreshing the current one
@@ -75,10 +58,6 @@ var usc_explorer = SAGE2_App.extend({
 			this.fadeCount = 1; // avoid divide by zero later on
 		}
 
-		this.URL1  = "";
-		this.URL1a = "";
-		this.URL1b = "";
-
 		this.today = "";
 		this.timeDiff = 0;
 
@@ -91,14 +70,6 @@ var usc_explorer = SAGE2_App.extend({
 		this.listFileName = "";
 
 		this.appName = "usc_explorer:";
-		
-		// maybe use an array of images?
-		
-		this.image1 = new Image();
-		this.image2 = new Image();
-		this.image3 = new Image();
-		
-		this.imageTemp = new Image();
 
 		this.updateCounter = 0;
 
@@ -114,8 +85,7 @@ var usc_explorer = SAGE2_App.extend({
 	// choose a specific image library from those loaded to cycle through
 
 	chooseImagery: function(selection) {
-		this.listFileNamePhotos = presentationScene[selection].list;
-		this.listFileNameLibrary = presentationScene[selection].location;
+		this.imageSet = PresentationControl.getScene(selection, this.resrcPath);
 	},
 
 	////////////////////////////////////////
@@ -125,14 +95,8 @@ var usc_explorer = SAGE2_App.extend({
 		this.imageLoadCallbackFunc       = this.imageLoadCallback.bind(this);
 		this.imageLoadFailedCallbackFunc = this.imageLoadFailedCallback.bind(this);
 
-		this.image1.onload  = this.imageLoadCallbackFunc;
-		this.image1.onerror = this.imageLoadFailedCallbackFunc;
-		this.image2.onload  = this.imageLoadCallbackFunc;
-		this.image2.onerror = this.imageLoadFailedCallbackFunc;
-		this.image3.onload  = this.imageLoadCallbackFunc;
-		this.image3.onerror = this.imageLoadFailedCallbackFunc;
 
-		this.chooseImagery(this.state.imageSet);
+		this.chooseImagery(0);
 		this.loadInList();
 	},
 
@@ -178,7 +142,7 @@ var usc_explorer = SAGE2_App.extend({
 
 		// load scene's image list
 		this.bigList = d3.csv.parse(localData);
-		console.log(localData);
+	//	console.log(localData);
 		console.log(this.appName + "loaded in list of " + this.bigList.length + " images");
 
 		this.update();
@@ -191,127 +155,89 @@ var usc_explorer = SAGE2_App.extend({
 	drawEverything: function () {
 		if ((this.okToDraw >= -this.fadeCount) || (this.forcegreenraw > 0)) {
 			//this.svg.selectAll("*").remove();
+			
 			this.forcegreenraw = 0;
-
+			
 			var newWidth  = this.canvasWidth;
 			var newHeight = this.canvasHeight;
 
 			this.svg.select("#baserect")
 				.attr("height", newHeight)
 				.attr("width", newWidth);
-
-			var windowRatio = this.canvasWidth / this.canvasHeight;
-			var image1DrawWidth = this.canvasWidth;
-			var image1DrawHeight = this.canvasHeight;
-			var image2DrawWidth = this.canvasWidth;
-			var image2DrawHeight = this.canvasHeight;
-			var image3DrawWidth = this.canvasWidth;
-			var image3DrawHeight = this.canvasHeight;
-
-			if (this.image2 != "NULL") {
-				 console.log("original image is " + this.image2.width + "," + this.image2.height);
-				var image2x = this.image2.width;
-				var image2y = this.image2.height;
-				var image2ratio = image2x / image2y;
-
-				// want wide images to be aligned to top not center
-				if (image2ratio > windowRatio) {
-					image2DrawWidth  =  this.canvasWidth;
-					image2DrawHeight = this.canvasWidth / image2ratio;
+			
+			var width = 0;
+			for (var i = 0; i < this.imageSet.length; i++){
+				width = this.canvasWidth/this.imageSet.length * i;
+				if (this.images[i] != "NULL") {
+					
+					this.svg.select("#image" + i)
+						.attr("xlink:href", this.images[i].src)
+						.attr("x",  width)
+						.attr("y",  0)
+						.attr("preserveAspectRatio", "none")
+						.attr("width",  this.canvasWidth/this.imageSet.length)
+						.attr("height", '100%');
 				}
-				
-				this.svg.select("#image2")
-					.attr("xlink:href", this.image2.src)
-					.attr("x",  this.canvasWidth/3)
-					.attr("y",  0)
-					.attr("preserveAspectRatio", "none")
-					.attr("width",  this.canvasWidth/3)
-					.attr("height", '100%');
 			}
 
-			if (this.image1 != "NULL") {
-				// current image
-				var image1x     = this.image1.width;
-				var image1y     = this.image1.height;
-				var image1ratio = image1x / image1y;
-
-				// want wide images to be aligned to top not center
-				if (image1ratio > windowRatio) {
-					image1DrawWidth  =  this.canvasWidth;
-					image1DrawHeight = this.canvasWidth / image1ratio;
-				}
-
-				this.svg.select("#image1")
-					.attr("xlink:href", this.image1.src)
-					.attr("x",  0)
-					.attr("y",  0)
-					.attr("width",  this.canvasWidth/3)
-					.attr("preserveAspectRatio", "none")
-					.attr("height", '100%');
-			}
-			if (this.image3 != "NULL") {
-				// current image
-				var image3x     = this.image3.width;
-				var image3y     = this.image3.height;
-				var image3ratio = image3x / image3y;
-
-				// want wide images to be aligned to top not center
-				if (image3ratio > windowRatio) {
-					image3DrawWidth  =  this.canvasWidth;
-					image3DrawHeight = this.canvasWidth / image3ratio;
-				}
-
-				this.svg.select("#image3")
-					.attr("xlink:href", this.image3.src)
-					.attr("x",  2*this.canvasWidth/3)
-					.attr("y",  0)
-					.attr("width",  this.canvasWidth/3)
-					.attr("preserveAspectRatio", "none")
-					.attr("height", '100%');
-			}
 			this.okToDraw -= 1.0;
 		}
 
 
 		// if enough time has passed grab a new image and display it
-
-		if (isMaster) {
-			this.updateCounter += 1;
-
-			if (this.updateCounter > (this.loadTimer * this.maxFPS)) {
-				this.update();
-			}
-		}
+	//	if (isMaster) {
+	//		this.updateCounter += 1;
+	//		if (this.updateCounter > (this.loadTimer * this.maxFPS)) {
+	//			this.update();
+	//		}
+//		}
 	},
 
 	////////////////////////////////////////
-	// the master loads in the text file containing ths list of images in this photo album
+	// the master loads ths list of images for the current scene
 
 	loadInList: function() {
 		if (isMaster) {
-			this.listFileName = this.listFileNamePhotos;
-			d3.text(this.listFileName, this.listFileCallbackFunc);
-		}
-	},
-
-	////////////////////////////////////////
-	// choose a random image from the current photo album
-	// only the master should pick a new image (but right now each clients does)
-	// if all the random numbers are in sync this will work - but not completely safe
-
-	newImage: function() {
-		if (this.bigList === null) {
-			this.state.counter = 0;
-		} else {
-			this.state.counter = Math.floor(Math.random() * this.bigList.length);
+			this.images = [];
+			this.svg.selectAll("*").remove(); // clean svg
+			this.svg.append("svg:rect")
+					.style("stroke", this.canvasBackground)
+					.style("fill", this.canvasBackground)
+					.style("fill-opacity", 1.0)
+					.attr("x",  0)
+					.attr("y",  0)
+					.attr("id", "baserect")
+					.attr("width",  this.canvasWidth)
+					.attr("height", '100%');
+			
+			for (var i = 0; i < this.imageSet.length; i++){
+				var image = new Image();
+				this.images.push(image);
+				image.onload  = this.imageLoadCallbackFunc;
+				image.onerror = this.imageLoadFailedCallbackFunc;
+				image.id = "image" + i;
+				
+			//	console.log(image);
+				
+				image.src = this.imageSet[i];
+					
+				this.svg.append("svg:image")
+					.attr("opacity", 1)
+					.attr("x",  0)
+					.attr("y",  0)
+					.attr("id", image.id)
+			}
 		}
 	},
 
 	// move to the next scene
 	nextAlbum: function() {
-		this.bigList = null;
+		this.listFileCallbackFunc        = this.listFileCallback.bind(this);
+		this.imageLoadCallbackFunc       = this.imageLoadCallback.bind(this);
+		this.imageLoadFailedCallbackFunc = this.imageLoadFailedCallback.bind(this);
+		
 		this.state.imageSet += 1;
-		if (this.state.imageSet >= presentationScene.length) {
+		if (this.state.imageSet >= this.scenesNumber) {
 			this.state.imageSet = 0;
 		}
 		this.chooseImagery(this.state.imageSet);
@@ -320,8 +246,8 @@ var usc_explorer = SAGE2_App.extend({
 
 	// choose a particular scene
 	setAlbum: function (albumNumber) {
-		this.bigList = null;
-		this.state.imageSet = +albumNumber;
+
+		this.state.imageSet = +albumNumber -1;
 		this.chooseImagery(this.state.imageSet);
 		this.loadInList();
 	},
@@ -344,11 +270,6 @@ var usc_explorer = SAGE2_App.extend({
 				console.log(this.appName + "list of photos not populated yet");
 				return;
 			}
-
-			// randomly pick a new image to show from the current photo album
-			// which can be showing the same image if the album represents a webcam
-
-			this.newImage();
 
 			// if there is no image name for that nth image then get out
 			if (this.bigList[this.state.counter] === null) {
@@ -381,26 +302,6 @@ var usc_explorer = SAGE2_App.extend({
 			console.log(this.appName + "no filename of new photo to load");
 			return;
 		}
-		// console.log(this.appName + this.fileName);
-
-		// ask for image3 to load in the new image
-
-		///
-		// this.imageTemp = this.image2; // hold onto 2
-		// this.image2 = this.image1; // image2 is the previous image (needed for fading)
-
-		//this.image3 = new Image(); // image3 is the new image to be loaded
-		
-		
-		// upload images from files - need to have an array of fileNames/URLs
-	//	console.log(this.image1.src);
-		
-		var imageSet = PresentationControl.getScene(0, this.resrcPath);
-		this.image3.src = imageSet[0];
-		this.image1.src = imageSet[1];
-		this.image2.src = imageSet[2];
-		
-		
 	},
 
 	////////////////////////////////////////
@@ -435,7 +336,7 @@ var usc_explorer = SAGE2_App.extend({
 		this.canvasBackground = "green";
 
 		this.canvasWidth  = 2800;
-		this.canvasHeight = 600;
+		this.canvasHeight = 1600;
 
 		this.loadTimer = 15; // default value to be replaced from photo_scrapbooks.js
 		this.fadeCount = 30.0; // default value to be replaced from photo_scrapbooks.js
@@ -453,10 +354,6 @@ var usc_explorer = SAGE2_App.extend({
 			this.fadeCount = 1; // avoid divide by zero later on
 		}
 
-		this.URL1  = "";
-		this.URL1a = "";
-		this.URL1b = "";
-
 		this.today = "";
 		this.timeDiff = 0;
 
@@ -469,12 +366,6 @@ var usc_explorer = SAGE2_App.extend({
 		this.listFileName = "";
 
 		this.appName = "usc_explorer:";
-
-		this.image1 = new Image();
-		this.image2 = new Image();
-		this.image3 = new Image();
-
-		this.imageTemp = null;
 
 		this.updateCounter = 0;
 
@@ -490,6 +381,8 @@ var usc_explorer = SAGE2_App.extend({
 		PresentationControl.loadImage(path);
 	    presentationScene = PresentationControl.getList();
 	    
+	    this.imageSet = PresentationControl.getScene(0, this.resrcPath);
+	    
 		// attach the SVG into the this.element node provided to us
 		var box = "0,0," + this.canvasWidth + "," + this.canvasHeight;
 		this.svg = d3.select(this.element).append("svg:svg")
@@ -497,41 +390,6 @@ var usc_explorer = SAGE2_App.extend({
 			.attr("height",  '100%')
 			.attr("viewBox", box)
 			.attr("preserveAspectRatio", "none"); // do not change image
-
-		this.svg.append("svg:rect")
-				.style("stroke", this.canvasBackground)
-				.style("fill", this.canvasBackground)
-				.style("fill-opacity", 1.0)
-				.attr("x",  0)
-				.attr("y",  0)
-				.attr("id", "baserect")
-				.attr("width",  this.canvasWidth)
-				.attr("height", '100%');
-		
-		// create in a loop from presentation/scene/frames
-		//for (var i = 0; i < scene.length; i++) {
-		
-		this.svg.append("svg:image")
-				.attr("opacity", 1)
-				.attr("x",  0)
-				.attr("y",  0)
-				.attr("id", "image2") //image1
-				.attr("width",  data.width)
-				.attr("height", this.canvasHeight);
-		this.svg.append("svg:image")
-				.attr("opacity", 1)
-				.attr("x",  0)
-				.attr("y",  0)
-				.attr("id", "image1") //image2
-				.attr("width",  data.width)
-				.attr("height", this.canvasHeight);
-		this.svg.append("svg:image")
-				.attr("opacity", 1)
-				.attr("x",  0)
-				.attr("y",  0)
-				.attr("id", "image3")
-				.attr("width",  data.width)
-				.attr("height", this.canvasHeight);
 
 		// create the widgets
 		console.log("creating controls");
@@ -541,13 +399,16 @@ var usc_explorer = SAGE2_App.extend({
 		// 	// This is executed after the button click animation occurs.
 		// 	this.nextAlbum();
 		// }.bind(this)});
+	    this.scenesNumber = PresentationControl.getNumberOfScenes();
 	    
-		for (var loopIdx = 0; loopIdx < presentationScene.length; loopIdx++) {
-			var loopIdxWithPrefix = "0" + loopIdx;
+		for (var loopIdx = 0; loopIdx < this.scenesNumber; loopIdx++) {
+			var loopIdxWithPrefix = loopIdx;
+			
+		//	console.log(PresentationControl.getSceneName(loopIdx));
 			(function(loopIdxWithPrefix) {
 				var albumButton = {
 					textual: true,
-					label: presentationScene[loopIdx].name,
+					label: PresentationControl.getSceneName(loopIdx),
 					fill: "rgba(250,250,250,1.0)",
 					animation: false
 				};
@@ -587,6 +448,7 @@ var usc_explorer = SAGE2_App.extend({
 	},
 
 	event: function(eventType, pos, user, data, date) {
+	//	console.log(data.identifier);
 		if (eventType === "pointerPress" && (data.button === "left")) {
 			// pass
 		}
@@ -597,11 +459,11 @@ var usc_explorer = SAGE2_App.extend({
 			this.nextAlbum();
 			this.refresh(date);
 		} else if (eventType === "widgetEvent") {
-			if (data.ctrlId === "Next") {
-				this.nextAlbum();
-			} else {
-				this.setAlbum(data.ctrlId);
-			}
+			//if (data.ctrlId === "Next") {
+		//		this.nextAlbum();
+		//	} else {
+				this.setAlbum(data.identifier);
+		//	}
 			this.refresh(date);
 		}
 	}

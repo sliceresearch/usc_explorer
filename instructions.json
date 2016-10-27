@@ -2,7 +2,7 @@
 	"main_script": "usc_explorer.js",
 	"icon": "usc.png",
 	"width": 2800,
-	"height": 600,
+	"height": 1600,
 	"animation": true,
 	"dependencies": [
 

@@ -61,6 +61,15 @@ PresentationControl.getList = function() {
 	return scene;
 };
 
+PresentationControl.getNumberOfScenes = function() {
+
+	return this.pres.scenes.length;
+};
+
+PresentationControl.getSceneName = function(id) {
+	return this.pres.scenes[id].scene;
+};
+
 PresentationControl.getScene = function(selection, path) {
 	// return a set of frames
 	var frame = this.pres.scenes[selection].getFrames();
