@@ -37,6 +37,7 @@ var usc_explorer = SAGE2_App.extend({
 
 		this.presentationScene = [];
 		this.imageSet = [];
+		this.sound = "";
 		this.images = [];
 	    
 		// load timer is how long to show a single image in seconds before loading 
@@ -62,6 +63,7 @@ var usc_explorer = SAGE2_App.extend({
 		this.timeDiff = 0;
 
 		this.bigList = null;
+		this.audio = null;
 
 		this.okToDraw = this.fadeCount;
 		this.forcegreenraw = 1;
@@ -86,6 +88,7 @@ var usc_explorer = SAGE2_App.extend({
 
 	chooseImagery: function(selection) {
 		this.imageSet = PresentationControl.getScene(selection, this.resrcPath);
+		this.sound = PresentationControl.getSceneSound(selection, this.resrcPath);
 	},
 
 	////////////////////////////////////////
@@ -147,15 +150,29 @@ var usc_explorer = SAGE2_App.extend({
 
 		this.update();
 		this.drawEverything();
+		
 	},
-
+		
 	////////////////////////////////////////
-	// blend from the current image to a new image if there is a new image to show
+	//play music
+
+	playSound: function () {
+		if (this.audio != null){
+			this.audio.pause();
+    		this.audio.currentTime = 0.0;
+		}
+		this.audio = new Audio(this.sound);
+		this.audio.play();
+	},
+	
+	
+	////////////////////////////////////////
+	// draw a sceve from presentation
 
 	drawEverything: function () {
 		if ((this.okToDraw >= -this.fadeCount) || (this.forcegreenraw > 0)) {
 			//this.svg.selectAll("*").remove();
-			
+
 			this.forcegreenraw = 0;
 			
 			var newWidth  = this.canvasWidth;
@@ -167,7 +184,7 @@ var usc_explorer = SAGE2_App.extend({
 			
 			var width = 0;
 			for (var i = 0; i < this.imageSet.length; i++){
-				width = this.canvasWidth/this.imageSet.length * i;
+				
 				if (this.images[i] != "NULL") {
 					
 					this.svg.select("#image" + i)
@@ -175,9 +192,10 @@ var usc_explorer = SAGE2_App.extend({
 						.attr("x",  width)
 						.attr("y",  0)
 						.attr("preserveAspectRatio", "none")
-						.attr("width",  this.canvasWidth/this.imageSet.length)
+						.attr("width",  this.canvasWidth/this.imageSet[i].width)
 						.attr("height", '100%');
 				}
+				width += this.canvasWidth/this.imageSet[i].width;
 			}
 
 			this.okToDraw -= 1.0;
@@ -198,6 +216,8 @@ var usc_explorer = SAGE2_App.extend({
 
 	loadInList: function() {
 		if (isMaster) {
+			this.playSound();
+			
 			this.images = [];
 			this.svg.selectAll("*").remove(); // clean svg
 			this.svg.append("svg:rect")
@@ -219,8 +239,8 @@ var usc_explorer = SAGE2_App.extend({
 				
 			//	console.log(image);
 				
-				image.src = this.imageSet[i];
-					
+				image.src = this.imageSet[i].image;
+
 				this.svg.append("svg:image")
 					.attr("opacity", 1)
 					.attr("x",  0)
@@ -340,7 +360,7 @@ var usc_explorer = SAGE2_App.extend({
 
 		this.loadTimer = 15; // default value to be replaced from photo_scrapbooks.js
 		this.fadeCount = 30.0; // default value to be replaced from photo_scrapbooks.js
-		var path = this.resrcPath + 'presentation.json';
+		var path = this.resrcPath + "Files/" + 'presentation.json';
 		
 		if (SAGE2_photoAlbumLoadTimer !== null) {
 			this.loadTimer = SAGE2_photoAlbumLoadTimer;
@@ -376,7 +396,7 @@ var usc_explorer = SAGE2_App.extend({
 		this.element.id = "div" + data.id;
 
 		var _this = this;
-	    var path = this.resrcPath + 'presentation.json';
+	    var path = this.resrcPath + "Files/" + 'presentation.json';
 	    
 		PresentationControl.loadImage(path);
 	    presentationScene = PresentationControl.getList();

@@ -32,23 +32,6 @@ PresentationControl.loadImage = function(path) {
 	xhr.setRequestHeader( "Content-Type", "text/plain" );
 	xhr.send( null );
 
-
-	scene[0] = {list:"https://lyra.evl.uic.edu:9000/sagewalls/photos.txt",
-		location:"https://lyra.evl.uic.edu:9000/sagewalls/",
-		name:"sage"};
-	scene[1] = {list:"https://lyra.evl.uic.edu:9000/webcam2.txt",
-		location:"ftp://ftp.evl.uic.edu/pub/INcoming/spiff/",
-		name:"pond"};
-	scene[2] = {list:"https://lyra.evl.uic.edu:9000/webcam3.txt",
-		location:"http://cdn.abclocal.go.com/three/wls/webcam/",
-		name:"chi"};
-	scene[3] = {list:"https://lyra.evl.uic.edu:9000/posters/photos.txt",
-		location:"https://lyra.evl.uic.edu:9000/posters/",
-		name:"movie"};
-	scene[4] = {list:"https://sage.evl.uic.edu/evl_Pictures/photos.txt",
-		location:"https://sage.evl.uic.edu/evl_Pictures/",
-		name:"evl"};
-	console.log(present);		            	
 	this.pres = present;
 }
 
@@ -70,18 +53,31 @@ PresentationControl.getSceneName = function(id) {
 	return this.pres.scenes[id].scene;
 };
 
+PresentationControl.getSceneSound = function(id, path) {
+	var sound_path = "";
+	if (this.pres.scenes[id].sound_source == 1){
+		sound_path = path + "Files/" + this.pres.scenes[id].sound;
+	} else {
+		sound_path = this.pres.scenes[id].sound
+	}
+	
+	return sound_path;
+};
+
 PresentationControl.getScene = function(selection, path) {
 	// return a set of frames
 	var frame = this.pres.scenes[selection].getFrames();
 	presScene = [];
 	for (var i = 0; i < frame.length; i++){
 		if (frame[i].source == 1){
-			var imagePath = path + frame[i].image;
+			var imagePath = path + "Files/" + frame[i].image;
 			console.log(path);
 		} else {
 			var imagePath = frame[i].image;
 		}
-		presScene.push(imagePath);
+		presScene[i] = {image: imagePath,
+			width: frame[i].width
+			};
 	}
 	console.log(presScene);
 	return presScene;
@@ -98,7 +94,7 @@ Presentation.fromJson = function (json){
     var obj = JSON.parse (json);
 	var frames = [];
 	for (var i = 0; i < obj.scenes.length; i++){
-			var scene = new Scene(obj.scenes[i].scene, obj.scenes[i].frames, obj.scenes[i].north, obj.scenes[i].east, obj.scenes[i].south, obj.scenes[i].west)
+			var scene = new Scene(obj.scenes[i].scene, obj.scenes[i].sound_source, obj.scenes[i].sound, obj.scenes[i].frames, obj.scenes[i].north, obj.scenes[i].east, obj.scenes[i].south, obj.scenes[i].west)
 			scenes.push(scene);
 			frames = [];
 			for (var j = 0; j < obj.scenes[i].frames.length; j++){
@@ -112,8 +108,10 @@ Presentation.fromJson = function (json){
 };
 
 
-var Scene = function (scene, frames, north, east, south, west){
+var Scene = function (scene, sound_source, sound, frames, north, east, south, west){
     this.scene = scene;
+    this.sound_source = sound_source;
+    this.sound = sound;
     this.frames = frames;
     this.north = north;
     this.east = east;
@@ -129,7 +127,7 @@ var Frame = function (image, source, video, width, hight){
     this.image = image;
     this.source = source;
     this.video = video;
-    this.copyright = width;
+    this.width = width;
     this.hight = hight;
 };
 

@@ -1,0 +1,117 @@
+{ 	"name": "Test", 
+	"author": "SM", 
+	"copyright": "SM", 
+	"scenes":[
+		{
+	        "scene": "main_scene",
+		"sound_source": 1,
+		"sound": "River_Flows_In_You_-_Yiruma_Piano_Tutorial_Synthes.wav",
+		"angle": 180,
+        	"frames":[
+			{
+			"source": 1, 
+			"image": "image1.jpg", 
+			"width": 4, 	
+			"hight": 1.0 },
+			{
+			"source": 1, 
+			"image": "capture.jpg", 
+			"width": 4, 	
+			"hight": 1.0 },
+			{
+			"source": 1, 
+			"image": "image1.jpg", 
+			"width": 4, 	
+			"hight": 1.0 },
+			{
+			"source": 1, 
+			"image": "radar.png", 
+			"width": 4, 	
+			"hight": 1.0 }
+			],
+        	"clips":[
+			{
+			"source": 1, 
+			"video": "Funny_Cartoon.ogg"
+			},
+			{
+			"source": 1, 
+			"video": "hedgehog_in_the_fog.ogg" }
+			],
+        	"north": 1,
+        	"east": 2,
+        	"south": 3,
+        	"west": 2},
+		{
+	        "scene": "second_scene",
+		"sound_source": 1,
+		"sound": "Emotional_Piano_Music_-_Last_Leaf_Falls_Synthesia_.wav",
+		"angle": 90,
+        	"frames":[
+			{
+			"source": 2, 
+			"image": "https://www.universitiesaustralia.edu.au/Images/UserUploadedImages/387/USClogo.jpg",
+			"video": "", 
+			"width": 4, 	
+			"hight": 1.0 },
+        		{
+			"source": 1, 
+			"image": "radar.png", 
+			"video": "", 
+			"width": 4, 	
+			"hight": 1.0 },
+			{
+			"source": 1, 
+			"image": "image1.jpg",
+			"video": "", 
+			"width": 4, 	
+			"hight": 1.0 },
+        		{
+			"source": 1, 
+			"image": "capture.jpg", 
+			"video": "", 
+			"width": 4, 	
+			"hight": 1.0 }
+			],
+        	"clips":[
+			{
+			"source": 1, 
+			"video": "hedgehog_in_the_fog.ogg"
+			},
+			{
+			"source": 1, 
+			"video": "Funny_Cartoon.ogg" }
+			],
+        	"north": 1,
+        	"east": 2,
+        	"south": 3,
+        	"west": 4	
+		},
+		{
+	        "scene": "third_scene",
+		"sound_source": 2,
+		"sound": "http://www.amclassical.com/mp3/amclassical_beethoven_fur_elise.mp3",
+        	"frames":[
+			{
+			"source": 1, 
+			"image": "image1.jpg", 
+			"width": 2, 	
+			"hight": 1.0 },
+			{
+			"source": 1, 
+			"image": "image3.jpg", 
+			"width": 4, 	
+			"hight": 1.0 },
+        		{
+			"source": 1, 
+			"image": "image2.jpg", 
+			"width": 4, 	
+			"hight": 1.0 }
+			],
+        	"north": 1,
+        	"east": 2,
+        	"south": 3,
+        	"west": 4	
+		}
+	] 
+}
