@@ -1,8 +1,8 @@
 {
 	"main_script": "usc_explorer.js",
 	"icon": "usc.png",
-	"width": 2800,
-	"height": 1600,
+	"width": 48000,
+	"height": 6800,
 	"animation": true,
 	"dependencies": [
 

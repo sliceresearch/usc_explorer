@@ -62,7 +62,7 @@ var usc_explorer = SAGE2_App.extend({
 		this.today = "";
 		this.timeDiff = 0;
 
-		this.bigList = null;
+	//	this.bigList = null;
 		this.audio = null;
 
 		this.okToDraw = this.fadeCount;
@@ -89,6 +89,7 @@ var usc_explorer = SAGE2_App.extend({
 	chooseImagery: function(selection) {
 		this.imageSet = PresentationControl.getScene(selection, this.resrcPath);
 		this.sound = PresentationControl.getSceneSound(selection, this.resrcPath);
+	//	console.log("CHOOSE" + this.imageSet);
 	},
 
 	////////////////////////////////////////
@@ -115,6 +116,7 @@ var usc_explorer = SAGE2_App.extend({
 	//	this.image1 = this.image3; // image1 is now the new image
 	//	this.image3 = this.imageTemp;
 		// console.log(this.appName + "imageLoadCallback");
+		
 	},
 
 	imageLoadFailedCallback: function() {
@@ -144,9 +146,9 @@ var usc_explorer = SAGE2_App.extend({
 		}
 
 		// load scene's image list
-		this.bigList = d3.csv.parse(localData);
+	//	this.bigList = d3.csv.parse(localData);
 	//	console.log(localData);
-		console.log(this.appName + "loaded in list of " + this.bigList.length + " images");
+	//	console.log(this.appName + "loaded in list of " + this.bigList.length + " images");
 
 		this.update();
 		this.drawEverything();
@@ -157,21 +159,28 @@ var usc_explorer = SAGE2_App.extend({
 	//play music
 
 	playSound: function () {
-		if (this.audio != null){
-			this.audio.pause();
-    		this.audio.currentTime = 0.0;
-		}
+		this.stopSound();
 		this.audio = new Audio(this.sound);
 		this.audio.play();
 	},
-	
-	
+		
+	////////////////////////////////////////
+	//stop music
+
+	stopSound: function () {
+		if (this.audio != null){
+			this.audio.pause();
+    		this.audio.currentTime = 0.0;
+    	}
+	},		
+
 	////////////////////////////////////////
 	// draw a sceve from presentation
 
 	drawEverything: function () {
-		if ((this.okToDraw >= -this.fadeCount) || (this.forcegreenraw > 0)) {
-			//this.svg.selectAll("*").remove();
+		if ((this.forcegreenraw > 0))
+		 {
+		//	this.svg.selectAll("*").remove();
 
 			this.forcegreenraw = 0;
 			
@@ -181,14 +190,12 @@ var usc_explorer = SAGE2_App.extend({
 			this.svg.select("#baserect")
 				.attr("height", newHeight)
 				.attr("width", newWidth);
-			
+			console.log("drawEverything");
 			var width = 0;
 			for (var i = 0; i < this.imageSet.length; i++){
-				
 				if (this.images[i] != "NULL") {
-					
 					this.svg.select("#image" + i)
-						.attr("xlink:href", this.images[i].src)
+						.attr("xlink:href", this.imageSet[i].image) //this.images[i].src)
 						.attr("x",  width)
 						.attr("y",  0)
 						.attr("preserveAspectRatio", "none")
@@ -200,24 +207,15 @@ var usc_explorer = SAGE2_App.extend({
 
 			this.okToDraw -= 1.0;
 		}
-
-
-		// if enough time has passed grab a new image and display it
-	//	if (isMaster) {
-	//		this.updateCounter += 1;
-	//		if (this.updateCounter > (this.loadTimer * this.maxFPS)) {
-	//			this.update();
-	//		}
-//		}
 	},
 
 	////////////////////////////////////////
 	// the master loads ths list of images for the current scene
 
 	loadInList: function() {
-		if (isMaster) {
-			this.playSound();
-			
+		console.log("loadInList");
+    	this.playSound();
+
 			this.images = [];
 			this.svg.selectAll("*").remove(); // clean svg
 			this.svg.append("svg:rect")
@@ -236,10 +234,6 @@ var usc_explorer = SAGE2_App.extend({
 				image.onload  = this.imageLoadCallbackFunc;
 				image.onerror = this.imageLoadFailedCallbackFunc;
 				image.id = "image" + i;
-				
-			//	console.log(image);
-				
-				image.src = this.imageSet[i].image;
 
 				this.svg.append("svg:image")
 					.attr("opacity", 1)
@@ -247,29 +241,26 @@ var usc_explorer = SAGE2_App.extend({
 					.attr("y",  0)
 					.attr("id", image.id)
 			}
-		}
+
 	},
 
 	// move to the next scene
 	nextAlbum: function() {
-		this.listFileCallbackFunc        = this.listFileCallback.bind(this);
-		this.imageLoadCallbackFunc       = this.imageLoadCallback.bind(this);
-		this.imageLoadFailedCallbackFunc = this.imageLoadFailedCallback.bind(this);
-		
 		this.state.imageSet += 1;
 		if (this.state.imageSet >= this.scenesNumber) {
 			this.state.imageSet = 0;
 		}
 		this.chooseImagery(this.state.imageSet);
 		this.loadInList();
+		this.forcegreenraw = 1;
 	},
 
 	// choose a particular scene
 	setAlbum: function (albumNumber) {
-
 		this.state.imageSet = +albumNumber -1;
 		this.chooseImagery(this.state.imageSet);
 		this.loadInList();
+		this.forcegreenraw = 1;
 	},
 
 	////////////////////////////////////////
@@ -280,48 +271,15 @@ var usc_explorer = SAGE2_App.extend({
 	update: function() {
 		if (isMaster) {
 			// console.log(this.appName + "UPDATE");
-
-			// reset the timer counting towards the next image swap
 			this.updateCounter = 0;
-
-
-			// if there is no big list of images to pick from then get out
-			if (this.bigList === null) {
-				console.log(this.appName + "list of photos not populated yet");
-				return;
-			}
-
-			// if there is no image name for that nth image then get out
-			if (this.bigList[this.state.counter] === null) {
-				console.log(this.appName + "cant find filename of image number " + this.state.counter);
-				return;
-			}
-
-			// escape makes a string url-compatible
-			// except for ()s, commas, &s, and odd characters like umlauts and graves
-
-			// this also appends a random number to the end of the request to avoid browser caching
-			// in case this is a single image repeatedly loaded from a webcam
-
-			// ideally this random number should come from the master to guarantee identical values across clients
-			
-		//	console.log(PresentationControl.pres.scenes[this.state.counter].frames[0].image);
-			
-			 //var path1 = this.resrcPath + 'park.jpg';
-			this.fileName = this.listFileNameLibrary + escape(this.bigList[this.state.counter].name);
-		//	console.log(this.fileName);
-			this.broadcast("updateNode", {data: this.fileName});
+			this.broadcast("updateNode", {data: 0});
 		}
 	},
 
 	updateNode: function(data) {
-
-		this.fileName = data.data;
-
-		if (this.fileName === null) {
-			console.log(this.appName + "no filename of new photo to load");
-			return;
-		}
+		console.log("TEST" + data);
+		this.forcegreenraw = 1;
+		this.drawEverything();
 	},
 
 	////////////////////////////////////////
@@ -377,7 +335,7 @@ var usc_explorer = SAGE2_App.extend({
 		this.today = "";
 		this.timeDiff = 0;
 
-		this.bigList = null;
+	//	this.bigList = null;
 
 		this.okToDraw = this.fadeCount;
 		this.forcegreenraw = 1;
@@ -486,5 +444,10 @@ var usc_explorer = SAGE2_App.extend({
 		//	}
 			this.refresh(date);
 		}
+	},
+	
+	quit: function() {
+		// destroy sound when application is closed
+		this.stopSound();
 	}
 });
