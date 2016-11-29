@@ -74,7 +74,7 @@ place (copy from defaultWin-cfg) localhost-cfg.json with
 		FFMpeg: "C:/Dev/ffmpeg-win64-shared/bin/"
 
 npm install node-exiftool
-npm install npm install dist-exiftool
+npm install dist-exiftool
 npm install exiftool.exe
 npm -g install exiftool
 

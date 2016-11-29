@@ -99,7 +99,6 @@ var usc_explorer = SAGE2_App.extend({
 		this.imageLoadCallbackFunc       = this.imageLoadCallback.bind(this);
 		this.imageLoadFailedCallbackFunc = this.imageLoadFailedCallback.bind(this);
 
-
 		this.chooseImagery(0);
 		this.loadInList();
 	},
@@ -256,6 +255,7 @@ var usc_explorer = SAGE2_App.extend({
 	},
 
 	// choose a particular scene
+	// scenes have numbers from 1 while in list they are kept from 0
 	setAlbum: function (albumNumber) {
 		this.state.imageSet = +albumNumber -1;
 		this.chooseImagery(this.state.imageSet);
